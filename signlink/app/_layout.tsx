@@ -1,9 +1,12 @@
 import 'react-native-reanimated';
 
 import { useFonts } from 'expo-font';
-import { Stack } from 'expo-router';
-import { StatusBar } from 'expo-status-bar';
+import {
+  Text,
+  View,
+} from 'react-native';
 
+import { mainstyles } from '@/AppSignlinks/styles/generalappstyles';
 import { useColorScheme } from '@/hooks/useColorScheme';
 import {
   DarkTheme,
@@ -24,12 +27,13 @@ export default function RootLayout() {
 
   return (
     <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
-      <Stack>
-        <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
-        <Stack.Screen name="+not-found" />
-      </Stack>
-      <StatusBar style="auto" />
+      <View style={mainstyles.container}>
+      <Text>Welcome</Text>
+        <Text>Entery Point is here</Text>
+    </View>
 
     </ThemeProvider>
   );
 }
+
+
