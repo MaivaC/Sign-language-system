@@ -28,8 +28,8 @@ export default function RootLayout() {
   return (
     <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
       <View style={mainstyles.container}>
-      <Text>Welcome</Text>
-        <Text>Entery Point is here</Text>
+      <Text style={{textAlign:"center",fontSize:50,fontWeight:"bold"}}>WELCOME</Text>
+        <Text style={{textAlign:"center",fontSize:30,fontWeight:"bold"}}>Entery Point is here</Text>
     </View>
 
     </ThemeProvider>
