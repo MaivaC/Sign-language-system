@@ -3,7 +3,7 @@ import 'react-native-reanimated';
 import { useFonts } from 'expo-font';
 import { View } from 'react-native';
 
-import Audiototext from '@/AppSignlinks/screens/audiototextscreen';
+import Loadingscreen from '@/AppSignlinks/screens/loadscreen';
 import { mainstyles } from '@/AppSignlinks/styles/generalappstyles';
 import { useColorScheme } from '@/hooks/useColorScheme';
 import {
@@ -26,9 +26,8 @@ export default function RootLayout() {
   return (
     <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
       <View style={mainstyles.container}>
- <Audiototext/>
+<Loadingscreen/>
     </View>
-
     </ThemeProvider>
   );
 }
