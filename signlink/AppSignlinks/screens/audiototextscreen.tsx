@@ -1,6 +1,6 @@
-import React, { useState } from "react";
+import React, { useState } from 'react';
 
-const audiototext = () => {
+const Audiototext = () => {
   const [hoveredStars, setHoveredStars] = useState({
     topLeft: false,
     topRight: false,
@@ -108,4 +108,4 @@ const audiototext = () => {
   );
 };
 
-export default audiototext;
+export default Audiototext;

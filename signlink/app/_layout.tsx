@@ -1,11 +1,9 @@
 import 'react-native-reanimated';
 
 import { useFonts } from 'expo-font';
-import {
-  Text,
-  View,
-} from 'react-native';
+import { View } from 'react-native';
 
+import Audiototext from '@/AppSignlinks/screens/audiototextscreen';
 import { mainstyles } from '@/AppSignlinks/styles/generalappstyles';
 import { useColorScheme } from '@/hooks/useColorScheme';
 import {
@@ -28,8 +26,7 @@ export default function RootLayout() {
   return (
     <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
       <View style={mainstyles.container}>
-      <Text style={{textAlign:"center",fontSize:50,fontWeight:"bold"}}>WELCOME</Text>
-        <Text style={{textAlign:"center",fontSize:30,fontWeight:"bold"}}>Entery Point is here</Text>
+ <Audiototext/>
     </View>
 
     </ThemeProvider>
