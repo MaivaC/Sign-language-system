@@ -3,7 +3,7 @@ import 'react-native-reanimated';
 import { useFonts } from 'expo-font';
 import { View } from 'react-native';
 
-import Loadingscreen from '@/AppSignlinks/screens/loadscreen';
+import SigntoText from '@/AppSignlinks/screens/signtotextscreen';
 import { mainstyles } from '@/AppSignlinks/styles/generalappstyles';
 import { useColorScheme } from '@/hooks/useColorScheme';
 import {
@@ -26,7 +26,7 @@ export default function RootLayout() {
   return (
     <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
       <View style={mainstyles.container}>
-<Loadingscreen/>
+<SigntoText/>
     </View>
     </ThemeProvider>
   );

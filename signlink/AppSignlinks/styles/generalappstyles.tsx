@@ -141,6 +141,18 @@ alignContent: "center",
     color:colors.primary
   },
 
+  
+
+  container2: {
+    flex: 1, // Fills 100% of screen height
+    flexDirection: 'column',
+    width: '100%',
+    height: "100%",
+    backgroundColor: colors.background,
+     opacity: 1,
+     justifyContent: "flex-start",
+    alignContent:"center"
+  },
 
 
 
