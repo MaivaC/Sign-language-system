@@ -28,9 +28,10 @@ const Loadingscreen: React.FC = () => {
 <View style={{ height: "55%", width: "90%", borderRadius:20, backgroundColor:"#fff"}}>
 
                   
-</View>
+              </View>
+              <Text  style={{color: "#fff", fontSize: 15, fontWeight: "bold",marginTop:"3%" }}>LOADING......</Text>
 
-<Text  style={{color:"#fff", fontSize:15,fontWeight:"bold",marginTop:"22%"}}>WELCOME TO </Text>
+<Text  style={{color:"#fff", fontSize:15,fontWeight:"bold",marginTop:"10%"}}>WELCOME TO </Text>
               <Text  style={{color:"#fff", fontSize:30,fontWeight:"bold"}}>SIGNLINK</Text>
 
               
