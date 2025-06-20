@@ -31,4 +31,4 @@ const SigntoText: React.FC = () => {
 };
 
 
-export default SigntoText
+export default SigntoText;

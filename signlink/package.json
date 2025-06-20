@@ -8,7 +8,10 @@
     "android": "expo start --android",
     "ios": "expo start --ios",
     "web": "expo start --web",
-    "lint": "expo lint"
+    "lint": "expo lint",
+    "scripts": {
+    "start": "node your-script.js"
+}
   },
   "dependencies": {
     "@emotion/react": "^11.14.0",
@@ -63,3 +66,4 @@
   },
   "private": true
 }
+ 
