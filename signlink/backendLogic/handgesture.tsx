@@ -1,133 +1,133 @@
-// App.tsx or App.js
-import React, { useState } from 'react';
+import React, {
+  useEffect,
+  useState,
+} from 'react';
 
 import {
+  CameraType,
+  CameraView,
+  useCameraPermissions,
+} from 'expo-camera';
+import {
+  Button,
   StyleSheet,
   Text,
+  TouchableOpacity,
   View,
 } from 'react-native';
-import { WebView } from 'react-native-webview';
 
-export default function GestureApp() {
-  const [gesture, setGesture] = useState('Waiting for gesture...');
+import * as handpose from '@tensorflow-models/handpose';
+import * as tf from '@tensorflow/tfjs';
+import { cameraWithTensors } from '@tensorflow/tfjs-react-native';
 
-  const handleMessage = (event: any) => {
-    const data = event.nativeEvent.data;
-    setGesture(data);
+const TensorCamera = cameraWithTensors(CameraView);
+
+export default function CameraTensor() {
+  const [facing, setFacing] = useState<CameraType>('back');
+  const [permission, requestPermission] = useCameraPermissions();
+  const [model, setModel] = useState<handpose.HandPose>();
+  const [handDetected, setHandDetected] = useState(false);
+
+  const textureDims = { height: 1200, width: 1600 };
+
+  const tensorDims = { width: 152, height: 200 };
+
+  useEffect(() => {
+    const prepare = async () => {
+      await tf.ready();
+      const loadedModel = await handpose.load();
+      setModel(loadedModel);
+      console.log('TF & Handpose model loaded');
+    };
+
+    prepare();
+  }, []);
+
+  const handleCameraStream = (images: IterableIterator<tf.Tensor3D>) => {
+    const loop = async () => {
+      const nextImageTensor = images.next().value;
+      if (model && nextImageTensor) {
+        const predictions = await model.estimateHands(nextImageTensor);
+        setHandDetected(predictions.length > 0);
+        tf.dispose([nextImageTensor]);
+      }
+      requestAnimationFrame(loop);
+    };
+    loop();
   };
+
+  if (!permission) return <View />;
+  if (!permission.granted) {
+    return (
+      <View style={styles.container}>
+        <Text style={styles.message}>We need your permission to show the camera</Text>
+        <Button onPress={requestPermission} title="grant permission" />
+      </View>
+    );
+  }
+
+  function toggleCameraFacing() {
+    setFacing((current) => (current === 'back' ? 'front' : 'back'));
+  }
 
   return (
     <View style={styles.container}>
-      <WebView
-        originWhitelist={['*']}
-        source={{ html: htmlContent }}
-        onMessage={handleMessage}
-        javaScriptEnabled
-        style={styles.webview}
+      <TensorCamera
+        style={styles.camera}
+        type={facing}
+        cameraTextureHeight={textureDims.height}
+        cameraTextureWidth={textureDims.width}
+        resizeHeight={tensorDims.height}
+        resizeWidth={tensorDims.width}
+        resizeDepth={3}
+        onReady={handleCameraStream}
+        autorender
       />
-      <View style={styles.overlay}>
-        <Text style={styles.gestureText}>{gesture}</Text>
+      <View style={styles.buttonContainer}>
+        <TouchableOpacity style={styles.button} onPress={toggleCameraFacing}>
+          <Text style={styles.text}>Flip Camera</Text>
+        </TouchableOpacity>
       </View>
+      {handDetected && <Text style={styles.detected}>✋ Hand Detected!</Text>}
     </View>
   );
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1 },
-  webview: { flex: 1, backgroundColor: 'black' },
-  overlay: {
+  container: {
+    flex: 1,
+    justifyContent: 'center',
+  },
+  message: {
+    textAlign: 'center',
+    paddingBottom: 10,
+  },
+  camera: {
+    flex: 1,
+  },
+  buttonContainer: {
     position: 'absolute',
     bottom: 40,
-    alignSelf: 'center',
-    backgroundColor: 'rgba(0,0,0,0.7)',
-    padding: 16,
-    borderRadius: 12,
+    left: 0,
+    right: 0,
+    flexDirection: 'row',
+    justifyContent: 'center',
   },
-  gestureText: {
+  button: {
+    backgroundColor: 'rgba(0,0,0,0.5)',
+    padding: 10,
+    borderRadius: 10,
+  },
+  text: {
     color: 'white',
-    fontSize: 18,
+    fontWeight: 'bold',
+  },
+  detected: {
+    position: 'absolute',
+    top: 60,
+    alignSelf: 'center',
+    color: 'limegreen',
+    fontSize: 24,
     fontWeight: 'bold',
   },
 });
-
-
-
-const htmlContent = `
-<!DOCTYPE html>
-<html>
-  <head>
-    <meta charset="UTF-8" />
-    <title>MediaPipe Hands</title>
-    <style>
-      body { margin: 0; overflow: hidden; background: black; }
-      video { display: none; }
-      canvas { position: absolute; top: 0; left: 0; }
-    </style>
-    <script src="https://cdn.jsdelivr.net/npm/@mediapipe/hands/hands.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/@mediapipe/camera_utils/camera_utils.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/@mediapipe/drawing_utils/drawing_utils.js"></script>
-  </head>
-  <body>
-    <video class="input_video" autoplay playsinline></video>
-    <canvas class="output_canvas"></canvas>
-    <script>
-      const videoElement = document.getElementsByClassName('input_video')[0];
-      const canvasElement = document.getElementsByClassName('output_canvas')[0];
-      const canvasCtx = canvasElement.getContext('2d');
-
-      function resizeCanvas() {
-        canvasElement.width = window.innerWidth;
-        canvasElement.height = window.innerHeight;
-      }
-      resizeCanvas();
-      window.addEventListener('resize', resizeCanvas);
-
-      const hands = new Hands({
-        locateFile: (file) => \`https://cdn.jsdelivr.net/npm/@mediapipe/hands/\${file}\`,
-      });
-
-      hands.setOptions({
-        maxNumHands: 1,
-        modelComplexity: 1,
-        minDetectionConfidence: 0.7,
-        minTrackingConfidence: 0.7,
-      });
-
-      hands.onResults((results) => {
-        canvasCtx.save();
-        canvasCtx.clearRect(0, 0, canvasElement.width, canvasElement.height);
-        canvasCtx.drawImage(
-          results.image, 0, 0, canvasElement.width, canvasElement.height);
-
-        if (results.multiHandLandmarks && results.multiHandLandmarks.length > 0) {
-          for (const landmarks of results.multiHandLandmarks) {
-            drawConnectors(canvasCtx, landmarks, HAND_CONNECTIONS, { color: '#00FF00', lineWidth: 3 });
-            drawLandmarks(canvasCtx, landmarks, { color: '#FF0000', lineWidth: 2 });
-
-            // Simple Gesture Detection: Detect if all fingers are up (open hand)
-            const isOpenHand = landmarks[8].y < landmarks[6].y &&
-                               landmarks[12].y < landmarks[10].y &&
-                               landmarks[16].y < landmarks[14].y &&
-                               landmarks[20].y < landmarks[18].y;
-
-            const message = isOpenHand ? "Open Hand Detected" : "Hand Detected";
-            window.ReactNativeWebView?.postMessage(message);
-          }
-        } else {
-          window.ReactNativeWebView?.postMessage("No Hand Detected");
-        }
-
-        canvasCtx.restore();
-      });
-
-      const camera = new Camera(videoElement, {
-        onFrame: async () => await hands.send({ image: videoElement }),
-        width: 640,
-        height: 480,
-      });
-
-      camera.start();
-    </script>
-  </body>
-</html>
-`;

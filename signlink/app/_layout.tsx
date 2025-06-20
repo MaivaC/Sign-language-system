@@ -4,7 +4,7 @@ import { useFonts } from 'expo-font';
 import { View } from 'react-native';
 
 import { mainstyles } from '@/AppSignlinks/styles/generalappstyles';
-import GestureApp from '@/backendLogic/handgesture';
+import CameraTensor from '@/backendLogic/handgesture';
 import { useColorScheme } from '@/hooks/useColorScheme';
 import {
   DarkTheme,
@@ -26,7 +26,8 @@ export default function RootLayout() {
   return (
     <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
       <View style={mainstyles.container}>
-<GestureApp/>
+<CameraTensor/>
+        
     </View>
     </ThemeProvider>
   );
