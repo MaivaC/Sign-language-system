@@ -52,7 +52,7 @@ export default function SpeechToTextExpo() {
       const response = await axios.post(
         "http://<YOUR_BACKEND_IP>:5000/transcribe",
         formData,
-        { headers: { "Content-Type": "multipart/form-data" } }git 
+        { headers: { "Content-Type": "multipart/form-data" } }
       );
       setTranscription(response.data.transcription);
     } catch (err) {
